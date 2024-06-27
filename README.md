@@ -6,7 +6,7 @@
 
 4. Open PHPMyAdmin (http://localhost/phpmyadmin)
 
-5. Create a bbdms with the name bbdms
+5. Create a report_generator with the name report_generator
 
 6. Import report_generator.sql file (available inside the zip package in the SQL file folder)
 
