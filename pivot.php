@@ -119,7 +119,7 @@ $msg = "";
 
                         <!-- Zero Configuration Table -->
                         <div class="panel panel-default" style="margin-top: 20px;">
-                            <div class="panel-heading">Listed Data</div>
+                            <button type="button" onclick="exportToExcel()">Export to Excel</button>
                             <div class="panel-body">
                                 <?php if ($msg) { ?>
                                     <div class="succWrap"><strong>SUCCESS</strong>:<?php echo htmlentities($msg); ?></div>
@@ -157,7 +157,6 @@ $msg = "";
     <script src="js/dataTables.bootstrap.min.js"></script>
     <form id="exportForm" method="POST" action="download-records.php">
     <input type="hidden" id="export_data" name="data">
-    <button type="button" onclick="exportToExcel()">Export to Excel</button>
 </form>
 
     <script>

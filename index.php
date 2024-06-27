@@ -4,8 +4,8 @@ include('config.php');
 if(isset($_POST['login']))
 {
 $username=$_POST['username'];
-$password=md5($_POST['password']);
-$sql ="SELECT UserName,Password FROM tbladmin WHERE UserName=:username and Password=:password";
+$password=($_POST['password']);
+$sql ="SELECT UserName,Password FROM users WHERE UserName=:username and Password=:password";
 $query= $dbh -> prepare($sql);
 $query-> bindParam(':username', $username, PDO::PARAM_STR);
 $query-> bindParam(':password', $password, PDO::PARAM_STR);
@@ -48,7 +48,7 @@ echo "<script type='text/javascript'> document.location = 'dashboard.php'; </scr
 									<input type="text" placeholder="Username" name="username" class="form-control mb">
 
 									<label for="" class="text-uppercase text-sm">Password</label>
-									<input type="password" placeholder="Password" name="password" class="form-control mb">
+									<input type="text" placeholder="Password" name="password" class="form-control mb">
 
 								
 
