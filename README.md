@@ -10,4 +10,4 @@
 
 6. Import report_generator.sql file (available inside the zip package in the SQL file folder)
 
-7. Run the script http://localhost/(name of the unzipped file)
+7. Run the script http://localhost/"name of the unzipped file"
