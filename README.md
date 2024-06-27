@@ -2,7 +2,7 @@
 
 2. Extract the file and copy FP_ABD folder
 
-3.Paste inside root directory(for xampp xampp/htdocs, for wamp wamp/www, for lamp var/www/HTML)
+3. Paste inside root directory(for xampp xampp/htdocs, for wamp wamp/www, for lamp var/www/HTML)
 
 4. Open PHPMyAdmin (http://localhost/phpmyadmin)
 
