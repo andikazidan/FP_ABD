@@ -11,12 +11,7 @@ if (strlen($_SESSION['alogin']) == 0) {
 $msg = "";
 
 
-// Default database and table
-$defaultDatabase = "bbdms";
-$defaultTable = "tblblooddonars";
 
-$database = isset($_GET['db']) ? $_GET['db'] : $defaultDatabase;
-$table = isset($_GET['table']) ? $_GET['table'] : $defaultTable;
 ?>
 
 <!DOCTYPE html>
