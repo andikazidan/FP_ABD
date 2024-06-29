@@ -1,46 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Pivot Table</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="script.js"></script>
-</head>
-<body>
-    <div>
-        <select id="selectDatabase" class="form-control" style="margin-top: 10px;">
-            <option value="">Select Database</option>
-        </select>
+<?php
+session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+include('config.php');
 
-        <select id="selectTable" class="form-control" style="margin-top: 10px;">
-            <option value="">Select Table</option>
-        </select>
+if (strlen($_SESSION['alogin']) == 0) {
+    header('location:index.php');
+    exit();
+}
 
-        <select id="selectPivotColumn" class="form-control" style="margin-top: 10px;">
-            <option value="">Select Pivot Column</option>
-        </select>
+if (isset($_POST['database'], $_POST['table'], $_POST['pivotColumn'], $_POST['valueColumn'], $_POST['aggregationFunction'])) {
+    $database = $_POST['database'];
+    $table = $_POST['table'];
+    $pivotColumn = $_POST['pivotColumn'];
+    $valueColumn = $_POST['valueColumn'];
+    $aggregationFunction = $_POST['aggregationFunction'];
 
-        <select id="selectValueColumn" class="form-control" style="margin-top: 10px;">
-            <option value="">Select Value Column</option>
-        </select>
+    try {
+        $dbh->query("USE `$database`");
 
-        <select id="selectAggregationFunction" class="form-control" style="margin-top: 10px;">
-            <option value="">Select Aggregation Function</option>
-            <option value="SUM">SUM</option>
-            <option value="AVG">AVG</option>
-            <option value="COUNT">COUNT</option>
-            <option value="MAX">MAX</option>
-            <option value="MIN">MIN</option>
-        </select>
+        // Fetch rows grouped by pivot column with the aggregation function applied to the value column
+        $stmt = $dbh->prepare(
+            "SELECT `$pivotColumn`, $aggregationFunction(`$valueColumn`) AS `aggregated_value` 
+            FROM `$table` 
+            GROUP BY `$pivotColumn`"
+        );
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        <button id="showPivotTable" class="btn btn-primary" style="margin-top: 10px;">Show Pivot Table</button>
-    </div>
+        if ($stmt->errorCode() !== '00000') {
+            $errorInfo = $stmt->errorInfo();
+            echo json_encode(['error' => $errorInfo[2]]);
+            exit();
+        }
 
-    <div id="pivotTableContainer" style="display:none; margin-top: 20px;">
-        <table id="pivotTable" border="1">
-            <thead></thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</body>
-</html>
+        // Prepare response data
+        $columns = [$pivotColumn, 'aggregated_value'];
+        $results = [];
+
+        foreach ($rows as $row) {
+            $results[] = [
+                $pivotColumn => $row[$pivotColumn],
+                'aggregated_value' => $row['aggregated_value']
+            ];
+        }
+
+        echo json_encode(['columns' => $columns, 'results' => $results]);
+    } catch (PDOException $e) {
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+} else {
+    echo json_encode(['error' => 'Required parameters are missing']);
+}
+?>

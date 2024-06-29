@@ -38,3 +38,9 @@
 
     <div id="pivotTableContainer" style="display:none; margin-top: 20px;">
         <table id="pivotTable" border="1">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</body>
+</html>

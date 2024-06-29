@@ -19,18 +19,11 @@ if (isset($_POST['database'], $_POST['table'], $_POST['pivotColumn'], $_POST['va
     try {
         $dbh->query("USE `$database`");
 
-        // Fetch distinct pivot column values
-        $stmt = $dbh->query("SELECT DISTINCT `$pivotColumn` FROM `$table`");
-        $pivotValues = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
         // Fetch rows grouped by pivot column with the aggregation function applied to the value column
         $stmt = $dbh->prepare(
-        "
-        SELECT `$pivotColumn`, $aggregationFunction(`$valueColumn`) 
-        AS `aggregated_value` 
-        FROM `$table` 
-        GROUP BY `$pivotColumn`
-        "
+            "SELECT `$pivotColumn`, $aggregationFunction(`$valueColumn`) AS `aggregated_value` 
+            FROM `$table` 
+            GROUP BY `$pivotColumn`"
         );
         $stmt->execute();
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -42,13 +35,13 @@ if (isset($_POST['database'], $_POST['table'], $_POST['pivotColumn'], $_POST['va
         }
 
         // Prepare response data
-        $columns = [$pivotColumn, $aggregationFunction];
+        $columns = [$pivotColumn, 'aggregated_value'];
         $results = [];
 
         foreach ($rows as $row) {
             $results[] = [
                 $pivotColumn => $row[$pivotColumn],
-                $aggregationFunction => $row['aggregated_value']
+                'aggregated_value' => $row['aggregated_value']
             ];
         }
 

@@ -132,11 +132,17 @@ $(document).ready(function() {
                     tableHead.empty();
                     tableBody.empty();
 
+                    // Debugging: Check if the columns are being processed
+                    console.log('Columns:', response.columns);
+
                     var headerRow = $('<tr>');
                     $.each(response.columns, function(index, column) {
                         headerRow.append($('<th>').text(column));
                     });
                     tableHead.append(headerRow);
+
+                    // Debugging: Check if the rows are being processed
+                    console.log('Results:', response.results);
 
                     $.each(response.results, function(index, rowData) {
                         var row = $('<tr>');
