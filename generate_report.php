@@ -22,8 +22,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Initialize SQL query
     $query = "SELECT $columns FROM $table";
 
-      // Add WHERE clause with CASE statement for specific filtering
-      if (!empty($filter_column) && !empty($filter_value)) {
+    // harus banget dijelasin
+    // Add WHERE clause with CASE statement for specific filtering
+    if (!empty($filter_column) && !empty($filter_value)) {
         $query .= " WHERE CASE WHEN $filter_column = '$filter_value' THEN 1 ELSE 0 END = 1";
     }
 
@@ -33,7 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         SELECT $group_by, COUNT($group_by) AS total_count FROM $table
         GROUP BY $group_by
         ";
-
     }
 
     // Execute query

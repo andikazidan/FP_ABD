@@ -1,21 +1,26 @@
 <?php
+session_start();
+error_reporting(0);
 include('config.php');
+
+if (strlen($_SESSION['alogin']) == 0) {
+    header('location:index.php');
+    exit();
+}
 
 if (isset($_POST['database']) && isset($_POST['table'])) {
     $database = $_POST['database'];
     $table = $_POST['table'];
-    
-    // Switch to the selected database
-    $dbh->exec("USE $database");
 
-    $columnsStmt = $dbh->query("SHOW COLUMNS FROM $table");
-    $columns = $columnsStmt->fetchAll(PDO::FETCH_COLUMN);
+    try {
+        $stmt = $dbh->query("SHOW COLUMNS FROM `$database`.`$table`");
+        $columns = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
-    $dataStmt = $dbh->query("SELECT * FROM $table");
-    $results = $dataStmt->fetchAll(PDO::FETCH_ASSOC);
-
-    echo json_encode(['columns' => $columns, 'results' => $results]);
+        echo json_encode(['columns' => $columns]);
+    } catch (PDOException $e) {
+        echo json_encode(['error' => $e->getMessage()]);
+    }
 } else {
-    echo json_encode(['columns' => [], 'results' => []]);
+    echo json_encode(['error' => 'Database or table not selected']);
 }
 ?>
