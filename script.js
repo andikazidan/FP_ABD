@@ -93,6 +93,55 @@ $(document).ready(function() {
         });
     });
 
+    // Fetch and display the original table
+    $('#showOriginalTable').click(function() {
+        var selectedDatabase = $('#selectDatabase').val();
+        var selectedTable = $('#selectTable').val();
+
+        if (selectedDatabase && selectedTable) {
+            $.ajax({
+                url: 'fetch_original_table.php',
+                type: 'POST',
+                data: { database: selectedDatabase, table: selectedTable },
+                dataType: 'json',
+                success: function(response) {
+                    console.log('Original Table Data Response:', response);
+                    if (response.error) {
+                        console.error('Error:', response.error);
+                        return;
+                    }
+
+                    var tableHead = $('#originalTable thead');
+                    var tableBody = $('#originalTable tbody');
+
+                    tableHead.empty();
+                    tableBody.empty();
+
+                    var headerRow = $('<tr>');
+                    $.each(response.columns, function(index, column) {
+                        headerRow.append($('<th>').text(column));
+                    });
+                    tableHead.append(headerRow);
+
+                    $.each(response.results, function(index, rowData) {
+                        var row = $('<tr>');
+                        $.each(response.columns, function(colIndex, columnName) {
+                            row.append($('<td>').text(rowData[columnName]));
+                        });
+                        tableBody.append(row);
+                    });
+
+                    $('#originalTableContainer').show();
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', error);
+                }
+            });
+        } else {
+            alert('Please select a database and table.');
+        }
+    });
+
     // Fetch and display the pivot table
     $('#showPivotTable').click(function() {
         var selectedDatabase = $('#selectDatabase').val();
@@ -132,17 +181,11 @@ $(document).ready(function() {
                     tableHead.empty();
                     tableBody.empty();
 
-                    // Debugging: Check if the columns are being processed
-                    console.log('Columns:', response.columns);
-
                     var headerRow = $('<tr>');
                     $.each(response.columns, function(index, column) {
                         headerRow.append($('<th>').text(column));
                     });
                     tableHead.append(headerRow);
-
-                    // Debugging: Check if the rows are being processed
-                    console.log('Results:', response.results);
 
                     $.each(response.results, function(index, rowData) {
                         var row = $('<tr>');
@@ -161,5 +204,62 @@ $(document).ready(function() {
         } else {
             alert('Please select all required fields.');
         }
+    });
+});
+
+$(document).ready(function() {
+    $('#showUnpivotTable').click(function() {
+        var selectedDatabase = $('#selectDatabase').val();
+        var selectedTable = $('#selectTable').val();
+        var selectedPivotColumn = $('#selectPivotColumn').val();
+        var selectedValueColumn = $('#selectValueColumn').val();
+    
+        $.ajax({
+            url: 'unpivot_data.php',
+            type: 'POST',
+            data: {
+                database: selectedDatabase,
+                table: selectedTable,
+                pivotColumn: selectedPivotColumn,
+                valueColumn: selectedValueColumn
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.error) {
+                    console.error('Error:', response.error);
+                    alert('An error occurred: ' + response.error);
+                    return;
+                }
+    
+                var table = $('#unpivotTable');
+                var thead = table.find('thead');
+                var tbody = table.find('tbody');
+    
+                thead.empty();
+                tbody.empty();
+    
+                // Create table headers
+                var headerRow = $('<tr>');
+                $.each(response.columns, function(index, column) {
+                    headerRow.append($('<th>').text(column));
+                });
+                thead.append(headerRow);
+    
+                // Create table rows
+                $.each(response.results, function(index, row) {
+                    var tableRow = $('<tr>');
+                    $.each(response.columns, function(index, column) {
+                        tableRow.append($('<td>').text(row[column] || ''));
+                    });
+                    tbody.append(tableRow);
+                });
+    
+                $('#unpivotTableContainer').show();
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error:', error);
+                alert('An error occurred while fetching data');
+            }
+        });
     });
 });
