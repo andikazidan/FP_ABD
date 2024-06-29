@@ -11,3 +11,13 @@
 6. Import report_generator.sql file (available inside the zip package in the SQL file folder)
 
 7. Run the script http://localhost/ "name of the unzipped file"
+=======
+8. Paste inside root directory(for xampp xampp/htdocs, for wamp wamp/www, for lamp var/www/HTML)
+
+9. Open PHPMyAdmin (http://localhost/phpmyadmin)
+
+10. Create a report_generator with the name report_generator
+
+11. Import report_generator.sql file (available inside the zip package in the SQL file folder)
+
+12. Run the script http://localhost/report_generator
